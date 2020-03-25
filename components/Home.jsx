@@ -2,13 +2,13 @@ import React from 'react';
 import { StyleSheet, Image,  Text, View, TouchableOpacity } from 'react-native';
 import rain from '../assets/rain.png';
 
-export default function Home() {
+export default function Home({ navigation }) {
     return (
       <View style={styles.container}>
         <View style={styles.top}>
         <View>
           <TouchableOpacity
-          onPress={() => alert('Hello, world!')}
+          onPress={() => navigation.navigate('Previsions')}
           style={styles.button}>
           <Text style={{ fontSize: 16, color: '#fff' }}>Prévisions</Text>
         </TouchableOpacity>

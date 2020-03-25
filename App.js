@@ -2,20 +2,21 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import Home from './components/Home';
 import Previsions from './components/Previsions';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Previsions />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Screen
+          name="Home"
+          component={Home}
+        />
+        <Stack.Screen name="Previsions" component={Previsions} />
+      </Stack.Navigator>
+  </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
