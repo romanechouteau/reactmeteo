@@ -1,9 +1,35 @@
-import React from 'react';
+import React, { useState , useEffect}  from 'react';
 import { StyleSheet, Image,  Text, View, TouchableOpacity } from 'react-native';
-import rain from '../assets/rain.png';
 import Jour from './Jour';
 
-export default function Home({ navigation }) {
+export default function Previsions({ navigation }) {
+  const [previsions, setPrevisions] = useState([]);
+
+  useEffect(() => {
+    getMeteo();
+    }, []);
+
+  function getMeteo() {
+    fetch('http://api.openweathermap.org/data/2.5/forecast?id=3020832&appid=9ee99ca097bcd7aad431d1d1d6452685&lang=fr&units=metric')
+    .then(res => res.json())
+    .then(res => {
+      let data = res["list"];
+      let meteo = [];
+      for (let i = 0; i<5; i++) {
+        let val = data[i];
+        let date = new Date(val["dt"] * 1000);
+        meteo.push({
+          "date": date.getDate().toString().padStart(2,"0") + "/" + (parseInt(date.getMonth()) + 1).toString().padStart(2,"0") + "/"  + date.getFullYear().toString().substring(2,4),
+          "heure": date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0'),
+          "description": val["weather"][0]["description"].charAt(0).toUpperCase() + val["weather"][0]["description"].substring(1,val["weather"][0]["description"].length),
+          "température": Math.round(val["main"]["temp"])+"°C",
+          "image": `http://openweathermap.org/img/wn/${val["weather"][0]["icon"]}@2x.png`
+        });
+      }
+      setPrevisions(meteo);
+    });
+  }
+
     return (
       <View style={styles.container}>
         <View style={styles.top}>
@@ -14,11 +40,11 @@ export default function Home({ navigation }) {
         </TouchableOpacity>
         </View>
         <View style={styles.jours}>
-            <Jour />
-            <Jour />
-            <Jour />
-            <Jour />
-            <Jour />
+          {previsions.map((val,index) => {
+            return (
+            <Jour meteo={val} key={index}/>
+            );
+          })}
         </View>
       </View>
     );

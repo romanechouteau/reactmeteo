@@ -1,8 +1,9 @@
 import React from 'react';
 import { StyleSheet, Image,  Text, View } from 'react-native';
-import rain from '../assets/simple-rain.png';
 
-export default function Home() {
+export default function Jour(props) {
+  const meteo = props.meteo;
+  
     return (
       <View style={styles.jour}>
         
@@ -10,16 +11,17 @@ export default function Home() {
           <View style={styles.contourImage}>
         <Image
           style={styles.image}
-          source={rain} resizeMode="contain"
+          source={{uri:meteo["image"]}} resizeMode="contain"
         />
         </View>
         <View>
-          <Text style={{ fontSize: 20, color: '#000' }}>Demain</Text>
-          <Text style={{ fontSize: 16, color: '#000' }}>Pluie</Text>
+          <Text style={{ fontSize: 20, color: '#000' }}>{meteo["date"]}</Text>
+          <Text style={{ fontSize: 20, color: '#000' }}>{meteo["heure"]}</Text>
+          <Text style={{ fontSize: 16, color: '#000' }}>{meteo["description"]}</Text>
           </View>
           
           </View>
-          <Text style={{ fontSize: 48, color: '#000', fontWeight: '700' }}>16°C</Text>
+          <Text style={{ fontSize: 48, color: '#000', fontWeight: '700' }}>{meteo["température"]}</Text>
       </View>
     );
   }
@@ -51,6 +53,8 @@ export default function Home() {
         alignItems: 'center'
     },
     contourImage: {
+      backgroundColor: '#fff',
+      borderRadius: 40,
       height: 80,
       width: 80,
       marginRight: 16,
