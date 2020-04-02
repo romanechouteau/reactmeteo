@@ -1,16 +1,33 @@
 import React, { useState , useEffect}  from 'react';
 import { StyleSheet, Image,  Text, View, TouchableOpacity } from 'react-native';
 import Jour from './Jour';
+import * as Location from 'expo-location';
+import * as Permissions from 'expo-permissions';
 
 export default function Previsions({ navigation }) {
   const [previsions, setPrevisions] = useState([]);
 
-  useEffect(() => {
-    getMeteo();
+  async function getLocationAsync() {
+    const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status === 'granted') {
+      return Location.getCurrentPositionAsync({ enableHighAccuracy: true });
+    } else {
+      throw "La géolocalisation n'a pas été autorisée";
+    }
+  }
+
+   useEffect(() => {
+     getLocationAsync()
+     .then(location => {
+      getMeteo(location);
+     })
+     .catch(erreur => {
+       alert(erreur);
+     })
     }, []);
 
-  function getMeteo() {
-    fetch('http://api.openweathermap.org/data/2.5/forecast?id=3020832&appid=9ee99ca097bcd7aad431d1d1d6452685&lang=fr&units=metric')
+  function getMeteo(localisation) {
+    fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${localisation["coords"]["latitude"]}&lon=${localisation["coords"]["longitude"]}&appid=9ee99ca097bcd7aad431d1d1d6452685&lang=fr&units=metric`)
     .then(res => res.json())
     .then(res => {
       let data = res["list"];
