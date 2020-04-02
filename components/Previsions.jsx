@@ -1,12 +1,15 @@
+// PAGE PREVISIONS : AFFICHAGE DES PREVISIONS : LES 5 PROCHAINS CRENEAUX HORAIRES
+
 import React, { useState , useEffect}  from 'react';
 import { StyleSheet, Image,  Text, View, TouchableOpacity } from 'react-native';
-import Jour from './Jour';
+import Prevision from './Prevision';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
 export default function Previsions({ navigation }) {
   const [previsions, setPrevisions] = useState([]);
 
+  //  Permet d'avoir la permission d'utiliser la localisation puis renvoie la localisation si elle a été autorisée
   async function getLocationAsync() {
     const { status, permissions } = await Permissions.askAsync(Permissions.LOCATION);
     if (status === 'granted') {
@@ -16,22 +19,26 @@ export default function Previsions({ navigation }) {
     }
   }
 
-   useEffect(() => {
-     getLocationAsync()
-     .then(location => {
-      getMeteo(location);
-     })
-     .catch(erreur => {
-       alert(erreur);
-     })
-    }, []);
+  // Au chargement de la page, on appelle la fonction qui récupère la localisation, puis on appelle la fonction qui récupère les prévisions en lui passant en paramètres la localisation (sinon on affiche une erreur)
+  useEffect(() => {
+    getLocationAsync()
+    .then(location => {
+      getPrevisions(location);
+    })
+    .catch(erreur => {
+      alert(erreur);
+    })
+  }, []);
 
-  function getMeteo(localisation) {
+  // Récupère les prévisions en fonction de la localisation passée en paramètres, puis stocke les informations dans la variable d'état previsions
+  function getPrevisions(localisation) {
     fetch(`http://api.openweathermap.org/data/2.5/forecast?lat=${localisation["coords"]["latitude"]}&lon=${localisation["coords"]["longitude"]}&appid=9ee99ca097bcd7aad431d1d1d6452685&lang=fr&units=metric`)
     .then(res => res.json())
     .then(res => {
       let data = res["list"];
       let meteo = [];
+
+      // On récupère les 5 prochaines prévisions (donc 5 créneaux horaires) dans la variable meteo
       for (let i = 0; i<5; i++) {
         let val = data[i];
         let date = new Date(val["dt"] * 1000);
@@ -47,58 +54,59 @@ export default function Previsions({ navigation }) {
     });
   }
 
-    return (
-      <View style={styles.container}>
-        <View style={styles.top}>
-          <TouchableOpacity
-          onPress={() => navigation.navigate('Home')}
-          style={styles.button}>
+  return (
+    <View style={styles.container}>
+      <View style={styles.top}>
+        <TouchableOpacity
+        onPress={() => navigation.navigate('Home')}
+        style={styles.button}>
           <Text style={{ fontSize: 16, color: '#fff' }}>Aujourd'hui</Text>
         </TouchableOpacity>
-        </View>
-        <View style={styles.jours}>
-          {previsions.map((val,index) => {
-            return (
-            <Jour meteo={val} key={index}/>
-            );
-          })}
-        </View>
       </View>
-    );
-  }
+      <View style={styles.prev}>
+        {previsions.map((val,index) => {
+          return (
+          <Prevision meteo={val} key={index}/>
+          );
+        })}
+      </View>
+    </View>
+  );
+
+}
   
-  const styles = StyleSheet.create({
-    container: {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    width: '100%',
+    backgroundColor: '#fff',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    padding: 24,
+    paddingTop: 60,
+  },
+  top: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: "space-between"
+  },
+  button: {
+    padding: 8,
+    backgroundColor: '#2f2e41',
+    borderRadius: 24,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.27,
+    shadowRadius: 4.65,
+    elevation: 6
+  },
+  prev: {
+      width: '100%',
       flex: 1,
-      width: '100%',
-      backgroundColor: '#fff',
-      alignItems: 'flex-start',
-      justifyContent: 'space-between',
-      padding: 24,
-      paddingTop: 60,
-    },
-    top: {
-      width: '100%',
-      flexDirection: 'row',
-      justifyContent: "space-between"
-    },
-    button: {
-      padding: 8,
-      backgroundColor: '#2f2e41',
-      borderRadius: 24,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 0,
-      },
-      shadowOpacity: 0.27,
-      shadowRadius: 4.65,
-      elevation: 6
-    },
-    jours: {
-        width: '100%',
-        flex: 1,
-        marginTop: 16,
-        justifyContent: "space-evenly"
-    }
-  });
+      marginTop: 16,
+      justifyContent: "space-evenly"
+  }
+});

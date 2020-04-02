@@ -1,5 +1,4 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
 import Home from './components/Home';
 import Previsions from './components/Previsions';
 import {NavigationContainer} from '@react-navigation/native';
@@ -17,6 +16,6 @@ export default function App() {
         />
         <Stack.Screen name="Previsions" component={Previsions} />
       </Stack.Navigator>
-  </NavigationContainer>
+    </NavigationContainer>
   );
 }
