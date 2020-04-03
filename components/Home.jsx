@@ -82,7 +82,7 @@ export default function Home({ navigation }) {
       setTemperature(Math.round(res["main"]["temp"]));
       let description = res["weather"][0]["description"].charAt(0).toUpperCase() + res["weather"][0]["description"].substring(1,res["weather"][0]["description"].length);
       setDesc(description);
-      setIcon(meteo[res["weather"][0]["icon"]]);
+      setIcon(res["weather"][0]["icon"]);
     });
   }
 
@@ -111,7 +111,7 @@ export default function Home({ navigation }) {
       <View style={styles.contourImage}>
         <Image
           style={styles.image}
-          source={icon} resizeMode="contain"
+          source={meteo[icon]} resizeMode="contain"
         />
       </View>
       <View>

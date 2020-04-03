@@ -1,4 +1,4 @@
-// PAGE PREVISIONS : AFFICHAGE DES PREVISIONS : LES 5 PROCHAINS CRENEAUX HORAIRES
+// PAGE PREVISIONS : AFFICHAGE DES PREVISIONS : LES 5 PROCHAINS JOURS
 
 import React, { useState , useEffect}  from 'react';
 import { StyleSheet, Image,  Text, View, TouchableOpacity } from 'react-native';
@@ -38,9 +38,9 @@ export default function Previsions({ navigation }) {
       let data = res["list"];
       let meteo = [];
 
-      // On récupère les 5 prochaines prévisions (donc 5 créneaux horaires) dans la variable meteo
+      // On récupère les prévisisons des 5 prochains jours dans la variable meteo
       for (let i = 0; i<5; i++) {
-        let val = data[i];
+        let val = data[i*8];
         let date = new Date(val["dt"] * 1000);
         meteo.push({
           "date": date.getDate().toString().padStart(2,"0") + "/" + (parseInt(date.getMonth()) + 1).toString().padStart(2,"0") + "/"  + date.getFullYear().toString().substring(2,4),
